@@ -1,0 +1,70 @@
+
+#include <SoftwareSerial.h>
+ 
+SoftwareSerial mySerial(9, 10);
+
+
+
+
+int sensorValue = 0; 
+int gasValue = A0; 
+int data;
+int led = 3;
+int Buzzer = 4; 
+ 
+void setup()
+{
+randomSeed(analogRead(0));
+mySerial.begin(9600);
+Serial.begin(9600); 
+pinMode(led,OUTPUT);
+pinMode(Buzzer, OUTPUT);
+
+pinMode(gasValue, INPUT);
+
+}
+ 
+void loop()
+{
+
+ 
+data = analogRead(gasValue);
+//Serial.println(sensorValue);
+Serial.print("Gas Level: ");
+Serial.println(data);
+
+delay(1000);
+
+  
+if ( data > 500) //
+{
+  digitalWrite(led,HIGH);
+  digitalWrite(Buzzer,HIGH);
+SendMessage();
+Serial.print("Gas detected");
+delay(1000);
+ 
+}
+else
+{
+Serial.println("Gas Level Low");
+
+  digitalWrite(led,LOW);
+  digitalWrite(Buzzer,LOW);
+delay(1000);
+}
+
+}
+ 
+void SendMessage()
+{
+Serial.println("In send");
+mySerial.println("AT+CMGF=1"); 
+delay(1000); 
+mySerial.println("AT+CMGS=\"1234567890\"\r");
+delay(1000);
+mySerial.println("Allert !!! Excess Gas Detected");
+delay(100);
+mySerial.println((char)26);
+delay(1000);
+}
